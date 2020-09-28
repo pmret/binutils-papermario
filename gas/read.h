@@ -154,5 +154,6 @@ extern void s_text PARAMS ((int));
 extern void stringer PARAMS ((int append_zero));
 extern void s_xstab PARAMS ((int what));
 extern void s_rva PARAMS ((int));
+extern void s_incbin PARAMS ((int));
 
 /* end of read.h */

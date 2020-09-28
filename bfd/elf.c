@@ -1905,7 +1905,7 @@ elf_map_symbols (abfd)
 
   bfd_set_symtab (abfd, new_syms, num_locals + num_globals);
 
-  elf_num_locals (abfd) = num_locals;
+  elf_num_locals (abfd) = num_locals + 3; // hack for PM.
   elf_num_globals (abfd) = num_globals;
   return true;
 }
@@ -2597,6 +2597,8 @@ assign_file_positions_for_segments (abfd)
 
 	  if (p->p_type == PT_LOAD)
 	    {
+#ifndef	NU64
+              printf("NU64 not turned on!\n");
 	      bfd_vma adjust;
 
 	      if ((flags & SEC_LOAD) != 0)
@@ -2626,7 +2628,7 @@ assign_file_positions_for_segments (abfd)
 		  if ((flags & SEC_LOAD) != 0)
 		    p->p_filesz += adjust;
 		}
-
+#endif
 	      sec->filepos = off;
 
 	      /* We check SEC_HAS_CONTENTS here because if NOLOAD is
@@ -3473,7 +3475,7 @@ swap_out_syms (abfd, sttp)
     symtab_hdr->sh_type = SHT_SYMTAB;
     symtab_hdr->sh_entsize = bed->s->sizeof_sym;
     symtab_hdr->sh_size = symtab_hdr->sh_entsize * (symcount + 1);
-    symtab_hdr->sh_info = elf_num_locals (abfd) + 1;
+    symtab_hdr->sh_info = elf_num_locals (abfd);
     symtab_hdr->sh_addralign = bed->s->file_align;
 
     symstrtab_hdr = &elf_tdata (abfd)->strtab_hdr;

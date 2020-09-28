@@ -69,6 +69,7 @@ mandir='${prefix}/man'
 subdirs=
 MFLAGS= MAKEFLAGS=
 SHELL=${CONFIG_SHELL-/bin/sh}
+DEFS=
 # Maximum number of lines to put in a shell here document.
 ac_max_here_lines=12
 
@@ -1544,6 +1545,7 @@ EOF
       m88k-*-coff*)         fmt=coff ;;
 
       # don't change em like *-*-bsd does
+      mips-nintendo-*)      fmt=elf DEFS="-DNU64 $DEFS" ;;
       mips-dec-netbsd*)	    fmt=elf endian=little ;;
       mips-dec-openbsd*)    fmt=elf endian=little ;;
       mips-dec-bsd*)        fmt=aout ;;
@@ -3313,7 +3315,7 @@ fi
 
 trap 'rm -f $CONFIG_STATUS conftest*; exit 1' 1 2 15
 
-DEFS=-DHAVE_CONFIG_H
+DEFS="-DHAVE_CONFIG_H $DEFS"
 
 # Without the "./", some shells look in PATH for config.status.
 : ${CONFIG_STATUS=./config.status}
