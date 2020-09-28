@@ -326,6 +326,7 @@ static const pseudo_typeS potable[] =
   {"ifne", s_if, (int) O_ne},
   {"ifnes", s_ifeqs, 1},
   {"ifnotdef", s_ifdef, 1},
+  {"incbin", s_incbin, 0},
   {"include", s_include, 0},
   {"int", cons, 4},
   {"irp", s_irp, 0},
@@ -4787,6 +4788,123 @@ equals (sym_name, reassign)
   if (flag_mri)
     mri_comment_end (stop, stopc);
 }				/* equals() */
+
+/* .incbin -- include a file verbatim at the current location.  */
+
+void
+s_incbin (x)
+     int x;
+{
+  FILE * binfile;
+  char * path;
+  char * filename;
+  char * binfrag;
+  long   skip = 0;
+  long   count = 0;
+  long   bytes;
+  int    len;
+
+#ifdef md_flush_pending_output
+  md_flush_pending_output ();
+#endif
+
+  SKIP_WHITESPACE ();
+  filename = demand_copy_string (& len);
+  if (filename == NULL)
+    return;
+
+  SKIP_WHITESPACE ();
+
+  /* Look for optional skip and count.  */
+  if (* input_line_pointer == ',')
+    {
+      ++ input_line_pointer;
+      skip = get_absolute_expression ();
+
+      SKIP_WHITESPACE ();
+
+      if (* input_line_pointer == ',')
+  {
+    ++ input_line_pointer;
+
+    count = get_absolute_expression ();
+    if (count == 0)
+      as_warn (".incbin count zero, ignoring `%s'", filename);
+
+    SKIP_WHITESPACE ();
+  }
+    }
+
+  demand_empty_rest_of_line ();
+
+  /* Try opening absolute path first, then try include dirs.  */
+  binfile = fopen (filename, FOPEN_RB);
+  if (binfile == NULL)
+    {
+      int i;
+
+      path = xmalloc ((unsigned long) len + include_dir_maxlen + 5);
+
+      for (i = 0; i < include_dir_count; i++)
+  {
+    sprintf (path, "%s/%s", include_dirs[i], filename);
+
+    binfile = fopen (path, FOPEN_RB);
+    if (binfile != NULL)
+      break;
+  }
+
+      if (binfile == NULL)
+  as_bad ("file not found: %s", filename);
+    }
+  else
+    path = xstrdup (filename);
+
+  if (binfile)
+    {
+      long   file_len;
+
+      register_dependency (path);
+
+      /* Compute the length of the file.  */
+      if (fseek (binfile, 0, SEEK_END) != 0)
+  {
+    as_bad ("seek to end of .incbin file failed `%s'", path);
+    goto done;
+  }
+      file_len = ftell (binfile);
+
+      /* If a count was not specified use the size of the file.  */
+      if (count == 0)
+  count = file_len;
+
+      if (skip + count > file_len)
+  {
+    as_bad ("skip (%ld) + count (%ld) larger than file size (%ld)",
+      skip, count, file_len);
+    goto done;
+  }
+
+      if (fseek (binfile, skip, SEEK_SET) != 0)
+  {
+    as_bad ("could not skip to %ld in file `%s'", skip, path);
+    goto done;
+  }
+
+      /* Allocate frag space and store file contents in it.  */
+      binfrag = frag_more (count);
+
+      bytes = fread (binfrag, 1, count, binfile);
+      if (bytes < count)
+  as_warn ("truncated file `%s', %ld of %ld bytes read",
+     path, bytes, count);
+    }
+done:
+  if (binfile != NULL)
+    fclose (binfile);
+  if (path)
+    free (path);
+}
 
 /* .include -- include a file at this point. */
 

@@ -165,6 +165,8 @@ mips*-*-linux-gnu*)	targ_emul=elf32bsmip
 			targ_extra_emuls="elf32lsmip mipsbig mipslit"
 			;;
 mips*-*-lnews*)		targ_emul=mipslnews ;;
+mips-nintendo-sysv)	targ_emul=mipsidt ;;
+mips-nintendo-nu64)	targ_emul=elf32ebmip ;;
 mn10200-*-*)		targ_emul=mn10200 ;;
 mn10300-*-*)		targ_emul=mn10300 ;;
 alpha*-*-linuxecoff*)	targ_emul=alpha targ_extra_emuls=elf64alpha

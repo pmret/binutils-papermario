@@ -228,19 +228,12 @@ config.h: stamp-config ; @true
 lconfig.h: needed2.awk errors
 	echo "/* !Automatically generated from $(srcdir)/functions.def"\
 	  "- DO NOT EDIT! */" >lconfig.h
-	awk -f needed2.awk <errors >>lconfig.h
 
 # Generate an awk script that looks for variables in functions.def
 
 needed2.awk: $(srcdir)/functions.def Makefile
 	echo "# !Automatically generated from $(srcdir)/functions.def"\
 	  "- DO NOT EDIT!" >needed2.awk
-	grep '^DEFVAR(' < $(srcdir)/functions.def \
-	 | sed -e '/DEFVAR/s|DEFVAR.\([^,]*\).*|/\1/ { printf "#ifndef NEED_\1\\n#define NEED_\1\\n#endif\\n" }|' \
-	 >>needed2.awk
-	grep '^DEFFUNC(' < $(srcdir)/functions.def \
-	 | sed -e '/DEFFUNC/s|DEFFUNC.\([^,]*\).*|/\1/ { printf "#ifndef NEED_\1\\n#define NEED_\1\\n#endif\\n" }|' \
-	 >>needed2.awk
 
 dummy.o: $(srcdir)/dummy.c $(srcdir)/functions.def
 	$(CC) -c $(CFLAGS) -I. -I$(INCDIR) $(HDEFINES) $(srcdir)/dummy.c 2>/dev/null

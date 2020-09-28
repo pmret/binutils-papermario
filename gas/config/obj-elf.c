@@ -316,6 +316,22 @@ obj_elf_common (ignore)
 	      as_warn ("Common alignment negative; 0 assumed");
 	    }
 	}
+#ifdef NU64
+      {
+	char  *n64align_env;
+	int    n64align;
+	static n64align_flag = -1;
+	
+	if(n64align_flag == -1){
+	  n64align_env = getenv("N64ALIGN");
+	  n64align_flag = (n64align_env && !strcasecmp(n64align_env, "ON") ? 1:0);
+	}
+	if(n64align_flag) {
+	  n64align = (size >= 1024 ? 16:(size >= 16 ? 8:0));
+	  if (n64align > temp) temp = n64align;
+	}
+      }
+#endif
       if (symbolP->local)
 	{
 	  segT old_sec;
