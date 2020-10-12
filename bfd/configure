@@ -71,6 +71,7 @@ mandir='${prefix}/man'
 subdirs=
 MFLAGS= MAKEFLAGS=
 SHELL=${CONFIG_SHELL-/bin/sh}
+DEFS=
 # Maximum number of lines to put in a shell here document.
 ac_max_here_lines=12
 
@@ -3298,7 +3299,7 @@ fi
 
 trap 'rm -f $CONFIG_STATUS conftest*; exit 1' 1 2 15
 
-DEFS=-DHAVE_CONFIG_H
+DEFS="-DHAVE_CONFIG_H $DEFS"
 
 # Without the "./", some shells look in PATH for config.status.
 : ${CONFIG_STATUS=./config.status}
