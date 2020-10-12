@@ -407,6 +407,10 @@ case "${targ}" in
     targ_defvec=ecoff_big_vec
     targ_selvecs=ecoff_little_vec
     ;;
+  mips-nintendo-*)
+    targ_defvec=bfd_elf32_bigmips_vec
+    DEFS="-DNU64 $DEFS"
+    ;;
   mips*-*-lnews*)
     targ_defvec=ecoff_biglittle_vec
     targ_selvecs="ecoff_little_vec ecoff_big_vec"
