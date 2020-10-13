@@ -1905,7 +1905,7 @@ elf_map_symbols (abfd)
 
   bfd_set_symtab (abfd, new_syms, num_locals + num_globals);
 
-  elf_num_locals (abfd) = num_locals + 3; // hack for PM.
+  elf_num_locals (abfd) = num_locals + 1; // hack for PM.
   elf_num_globals (abfd) = num_globals;
   return true;
 }
