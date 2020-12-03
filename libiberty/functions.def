@@ -8,7 +8,10 @@
  * (e.g bzero.o) are included if and only if cc fails to find
  * the corresponding function in libc.
  */
+ 
+ /* In macOS, we know various of these functions are guaranteed to be here, and trying to redefine them makes clang pitch a fit. So large parts of this file are commented out. */
 
+#ifndef DARWIN
 DEF(asprintf, int, (), NOTHING)
 DEF(atexit, int, (f), void (*f)())
 DEF(bcmp, int, (s1, s2, length), char *s1 AND char *s2 AND int length )
@@ -28,7 +31,11 @@ DEF(memcpy, PTR, (s1, s2, length), PTR s1 AND CONST PTR s2 AND size_t length)
 DEF(memmove, PTR, (s1, s2, length), PTR s1 AND CONST PTR s2 AND size_t length)
 DEF(memset, PTR, (s, val, length), PTR s AND int val AND size_t length )
 DEF(random, long int, (), NOTHING)
+#endif
+
 DEF(rename, int, (f, t), char *f AND char *t)
+
+#ifndef DARWIN
 DEF(rindex, char*, (s, c), char *s AND int c)
 DEF(strcasecmp, int, (s1, s2), char *s1 AND char *s2)
 DEF(strncasecmp, int, (s1, s2, n), char *s1 AND char *s2 AND int n)
@@ -40,14 +47,27 @@ DEF(strtod, double, (), NOTHING)
 DEF(strtol, long, (), NOTHING)
 DEF(strtoul, unsigned long, (), NOTHING)
 DEF(tmpnam, char *, (s), char * s)
+#endif
+
 DEF(vfork, int, (), NOTHING)
+
+#ifndef DARWIN
 DEF(vfprintf, int, (), NOTHING)
 DEF(vprintf, int, (), NOTHING)
 DEF(vsprintf, int, (), NOTHING)
+#endif
+
 DEF(sigsetmask, int, (), NOTHING)
+
+#ifndef DARWIN
 DEF(alloca, PTR, (size), size_t size)
+#endif
+
 DEF(waitpid, int, (pid, statp, opts), int pid AND int* statp AND int opts )
+
+#ifndef DARWIN
 DEF(vasprintf, int, (), NOTHING)
+#endif
 
 /* List of global variables that we want to look for in the host
    environment, and to generate an entry NEED_<variable> in config.h
@@ -55,16 +75,21 @@ DEF(vasprintf, int, (), NOTHING)
    second arg is how to declare the variable, and the third is how to
    use it. */
 
+#ifndef DARWIN
 DEFVAR(sys_nerr, int sys_nerr, sys_nerr = 0)
 DEFVAR(sys_errlist, char *sys_errlist[], sys_errlist[0] = 0)
 DEFVAR(sys_siglist, char *sys_siglist[], sys_siglist[0] = 0)
+#endif
 
 /* List of global functions that we want to look for in the host
    environment, and to generate an entry NEED_<funcname> in config.h
    if they are not found. */
 
+#ifndef DARWIN
 DEFFUNC(strerror, char*, (errnoval), int errnoval)
 DEFFUNC(psignal, void, (signo, message), unsigned signo AND char *message)
 DEFFUNC(basename, char *, (name), CONST char *name)
+#endif
+
 DEFFUNC(on_exit, void, (f, arg), void (*f)() AND char *arg)
 DEFFUNC(strsignal, const char *, (signo), int signo)
