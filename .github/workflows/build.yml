@@ -17,7 +17,7 @@ jobs:
             }
           - {
               OS: 'macos-latest',
-              CFLAGS: '-DDARWIN -static',
+              CFLAGS: '-DDARWIN -static -Wno-return-type -Wno-error -Wno-implicit-function-declaration',
               HOST: 'i386-apple-darwin',
               ARCHIVE_NAME: 'mac.tar.gz'
             }
