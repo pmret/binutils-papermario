@@ -17,7 +17,7 @@ jobs:
             }
           - {
               OS: 'macos-latest',
-              CFLAGS: '-static',
+              CFLAGS: '-DDARWIN -static',
               HOST: 'i386-apple-darwin',
               ARCHIVE_NAME: 'mac.tar.gz'
             }
