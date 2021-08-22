@@ -1,0 +1,65 @@
+name: Compile gas
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.TARGET.OS }}
+    strategy:
+      fail-fast: false
+      matrix:
+        TARGET:
+          - {
+              OS: 'ubuntu-latest',
+              CFLAGS: '-static',
+              HOST: 'i386-pc-linux',
+              ARCHIVE_NAME: 'linux.tar.gz'
+            }
+          - {
+              OS: 'macos-latest',
+              CFLAGS: '-static',
+              HOST: 'i386-apple-darwin',
+              ARCHIVE_NAME: 'mac.tar.gz'
+            }
+
+    name: Building gas for ${{ matrix.TARGET.OS }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies (Ubuntu)
+        shell: bash
+        if: matrix.TARGET.OS == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bison file gperf
+      - name: Configure for mips-nintendo-nu64
+        shell: bash
+        run: |
+          ./configure --target=mips-nintendo-nu64 --prefix=/opt/cross --disable-gprof --disable-gdb --disable-werror --host=${{ matrix.TARGET.HOST }} --build=${{ matrix.TARGET.HOST }}
+      - name: Make
+        continue-on-error: true
+        shell: bash
+        run: |
+          make CFLAGS="${{ matrix.TARGET.CFLAGS }}"
+      - name: Test for file
+        shell: bash
+        run: |
+          test -f gas/as-new
+          file gas/as-new
+      - name: Create release archive
+        shell: bash
+        run: |
+          cp gas/as-new as
+          tar -czf ${{ matrix.TARGET.ARCHIVE_NAME }} as
+      - name: Upload archive
+        uses: actions/upload-artifact@v2
+        with:
+          name: binutils-2.9.1-${{ matrix.TARGET.OS }}
+          path: |
+            ${{ matrix.TARGET.ARCHIVE_NAME }}
+      - name: Update release
+        uses: johnwbyrd/update-release@v1.0.0
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: ${{ matrix.TARGET.ARCHIVE_NAME }}
