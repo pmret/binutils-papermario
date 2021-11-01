@@ -1607,6 +1607,20 @@ mips16_mark_labels ()
     }
 }
 
+static int labels_not_debug()
+{
+	//go look and see if we can find any label that is not a debug label
+      struct insn_label_list *l;
+
+      for (l = insn_labels; l != NULL; l = l->next)
+	{
+		if(memcmp(S_GET_NAME(l->label), "._D_", 4) != 0)
+			return 1;
+	}
+
+	return 0;
+}
+
 /* Output an instruction.  PLACE is where to put the instruction; if
    it is NULL, this uses frag_more to get room.  IP is the instruction
    information.  ADDRESS_EXPR is an operand of the instruction to be
@@ -2126,7 +2140,7 @@ append_insn (place, ip, address_expr, reloc_type, unmatched_hi)
 		 whether there is a label on this instruction.  If
 		 there are any branches to anything other than a
 		 label, users must use .set noreorder.  */
-	      || insn_labels != NULL
+	      || (insn_labels != NULL && labels_not_debug())
 	      /* If the previous instruction is in a variant frag, we
 		 can not do the swap.  This does not apply to the
 		 mips16, which uses variant frags for different
