@@ -1504,15 +1504,18 @@ elf_frob_file_after_relocs ()
 	as_fatal ("Failed to set up debugging information: %s",
 		  bfd_errmsg (bfd_get_error ()));
 
+      /*
       sec = bfd_get_section_by_name (stdoutput, ".mdebug");
       assert (sec != NULL);
 
       know (stdoutput->output_has_begun == false);
+      */
 
       /* We set the size of the section, call bfd_set_section_contents
 	 to force the ELF backend to allocate a file position, and then
 	 write out the data.  FIXME: Is this really the best way to do
 	 this?  */
+   /*
       sec->_raw_size = bfd_ecoff_debug_size (stdoutput, &debug, debug_swap);
 
       if (! bfd_set_section_contents (stdoutput, sec, (PTR) NULL,
@@ -1527,6 +1530,7 @@ elf_frob_file_after_relocs ()
 				   sec->filepos))
 	as_fatal ("Could not write .mdebug section: %s",
 		  bfd_errmsg (bfd_get_error ()));
+      */
     }
 #endif /* NEED_ECOFF_DEBUG */
 }
