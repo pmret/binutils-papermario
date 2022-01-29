@@ -1351,6 +1351,12 @@ md_begin ()
 	subsegT subseg;
 	flagword flags;
 	segT sec;
+	char abidata[0x18];
+
+	memset(abidata, 0, sizeof(abidata));
+	*(int *)(&abidata[2]) = 0x01010140;
+	abidata[7] = 0x01;
+	abidata[0x13] = 0x01;
 
 	seg = now_seg;
 	subseg = now_subseg;
@@ -1361,6 +1367,12 @@ md_begin ()
 	flags = SEC_READONLY | SEC_DATA;
 	if (strcmp (TARGET_OS, "elf") != 0)
 	  flags |= SEC_ALLOC | SEC_LOAD;
+
+	sec = subseg_new (".MIPS.abiflags", (subsegT) 0);
+
+	(void) bfd_set_section_flags (stdoutput, sec, flags);
+	(void) bfd_set_section_alignment (stdoutput, sec, 3);
+	memcpy(frag_more(0x18), abidata, sizeof(abidata));
 
 	if (! mips_64)
 	  {
@@ -1402,7 +1414,7 @@ md_begin ()
 #endif
 	  }
 
-	if (ECOFF_DEBUGGING)
+	if (0) // (ECOFF_DEBUGGING)
 	  {
 	    sec = subseg_new (".mdebug", (subsegT) 0);
 	    (void) bfd_set_section_flags (stdoutput, sec,
@@ -11427,6 +11439,8 @@ mips_elf_final_processing ()
     elf_elfheader (stdoutput)->e_flags |= EF_MIPS_NOREORDER;
   if (mips_pic != NO_PIC)
     elf_elfheader (stdoutput)->e_flags |= EF_MIPS_PIC;
+
+    elf_elfheader (stdoutput)->e_flags = 0x60001101;
 }
 
 #endif /* OBJ_ELF || OBJ_MAYBE_ELF */
