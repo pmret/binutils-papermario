@@ -1840,7 +1840,7 @@ _bfd_mips_elf_final_write_processing (abfd, linker)
       break;
 
     case 6000:
-      val = E_MIPS_ARCH_6;
+      val = E_MIPS_ARCH_2;
       break;
 
     case 4000:
@@ -2296,14 +2296,6 @@ _bfd_mips_elf_fake_sections (abfd, hdr, sec)
 	hdr->sh_entsize = 0;
       else
 	hdr->sh_entsize = 1;
-    }
-  else if (strcmp (name, ".MIPS.abiflags") == 0)
-    {
-      hdr->sh_type = SHT_MIPS_ABIFLAGS;
-      hdr->sh_entsize = 0x18;
-
-      /* Force the section size to the correct value */
-      hdr->sh_size = sec->_raw_size = 0x18;
     }
   else if (strcmp (name, ".reginfo") == 0)
     {
