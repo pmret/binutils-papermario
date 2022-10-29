@@ -28,7 +28,7 @@
    ECOFF debugging information (e.g., MIPS ECOFF, MIPS ELF, Alpha
    ECOFF).  */
 
-#ifdef ECOFF_DEBUGGING
+#if ECOFF_DEBUGGING
 
 #include "coff/internal.h"
 #include "coff/symconst.h"
@@ -3168,6 +3168,11 @@ ecoff_directive_file (ignore)
 
   /* FIXME: we don't have to save the name here.  */
   name = demand_copy_C_string (&len);
+
+  symbolS *sym;
+  sym = symbol_new(name, absolute_section, 0, &zero_address_frag);
+  sym->bsym->flags |= BSF_FILE;
+  symbol_table_insert(sym);
 
   add_file (name, indx - 1, 0);
 

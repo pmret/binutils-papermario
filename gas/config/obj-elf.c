@@ -23,6 +23,8 @@
 #include "subsegs.h"
 #include "obstack.h"
 
+extern int mips_debug;
+
 #ifndef ECOFF_DEBUGGING
 #define ECOFF_DEBUGGING 0
 #else
@@ -1228,7 +1230,7 @@ obj_elf_init_stab_section (seg)
   /* Zero it out. */
   memset (p, 0, 12);
   as_where (&file, (unsigned int *) NULL);
-  stabstr_name = (char *) alloca (strlen (segment_name (seg)) + 4);
+  stabstr_name = (char *) malloc (strlen (segment_name (seg)) + 4);
   strcpy (stabstr_name, segment_name (seg));
   strcat (stabstr_name, "str");
   stroff = get_stab_string_offset (file, stabstr_name);
@@ -1504,6 +1506,7 @@ elf_frob_file_after_relocs ()
 	as_fatal ("Failed to set up debugging information: %s",
 		  bfd_errmsg (bfd_get_error ()));
 
+      if(mips_debug < 2) {
       sec = bfd_get_section_by_name (stdoutput, ".mdebug");
       assert (sec != NULL);
 
@@ -1527,6 +1530,7 @@ elf_frob_file_after_relocs ()
 				   sec->filepos))
 	as_fatal ("Could not write .mdebug section: %s",
 		  bfd_errmsg (bfd_get_error ()));
+      }
     }
 #endif /* NEED_ECOFF_DEBUG */
 }

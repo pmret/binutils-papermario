@@ -1803,7 +1803,7 @@ write_object_file ()
 	  /* Skip symbols which were equated to undefined or common
              symbols.  */
 	  if (symp->sy_value.X_op == O_symbol
-	      && (! S_IS_DEFINED (symp) || S_IS_COMMON (symp)))
+	      && (! S_IS_DEFINED (symp) || S_IS_COMMON (symp)) || !symp->written)
 	    {
 	      symbol_remove (symp, &symbol_rootP, &symbol_lastP);
 	      continue;

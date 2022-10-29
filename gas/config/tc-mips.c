@@ -599,7 +599,7 @@ static int mips_optimize = 2;
 
 /* Debugging level.  -g sets this to 2.  -gN sets this to N.  -g0 is
    equivalent to seeing no -g option at all.  */
-static int mips_debug = 0;
+int mips_debug = 0;
 
 /* The previous instruction.  */
 static struct mips_cl_insn prev_insn;
@@ -950,7 +950,9 @@ static const pseudo_typeS mips_pseudo_table[] =
   {"quad", s_cons, 3},
   {"short", s_cons, 1},
   {"single", s_float_cons, 'f'},
+  {"stabd", s_mips_stab, 'd'},
   {"stabn", s_mips_stab, 'n'},
+  {"stabs", s_mips_stab, 's'},
   {"text", s_change_sec, 't'},
   {"word", s_cons, 2},
   { 0 },
@@ -1362,6 +1364,20 @@ md_begin ()
 	if (strcmp (TARGET_OS, "elf") != 0)
 	  flags |= SEC_ALLOC | SEC_LOAD;
 
+       if(mips_debug >= 2) {
+               char abidata[0x18];
+               memset(abidata, 0, sizeof(abidata));
+               *(int *)(&abidata[2]) = 0x01010140;
+               abidata[7] = 0x01;
+               abidata[0x13] = 0x01;
+
+               sec = subseg_new (".MIPS.abiflags", (subsegT) 0);
+
+               (void) bfd_set_section_flags (stdoutput, sec, flags);
+               (void) bfd_set_section_alignment (stdoutput, sec, 3);
+               memcpy(frag_more(0x18), abidata, sizeof(abidata));
+       }
+
 	if (! mips_64)
 	  {
 	    sec = subseg_new (".reginfo", (subsegT) 0);
@@ -1402,7 +1418,7 @@ md_begin ()
 #endif
 	  }
 
-	if (ECOFF_DEBUGGING)
+	if (mips_debug < 2)
 	  {
 	    sec = subseg_new (".mdebug", (subsegT) 0);
 	    (void) bfd_set_section_flags (stdoutput, sec,
@@ -10502,7 +10518,6 @@ static void
 s_insn (ignore)
      int ignore;
 {
-  if (mips_opts.mips16)
     mips16_mark_labels ();
 
   demand_empty_rest_of_line ();
@@ -11427,6 +11442,7 @@ mips_elf_final_processing ()
     elf_elfheader (stdoutput)->e_flags |= EF_MIPS_NOREORDER;
   if (mips_pic != NO_PIC)
     elf_elfheader (stdoutput)->e_flags |= EF_MIPS_PIC;
+  elf_elfheader (stdoutput)->e_flags = 0x60001101;
 }
 
 #endif /* OBJ_ELF || OBJ_MAYBE_ELF */

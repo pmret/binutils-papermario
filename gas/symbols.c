@@ -141,6 +141,7 @@ symbol_create (name, segment, valu, frag)
   S_SET_VALUE (symbolP, valu);
   symbol_clear_list_pointers (symbolP);
 
+  symbolP->written = (memcmp(preserved_copy_of_name, ".L", 2) != 0);
   symbolP->sy_frag = frag;
 #ifndef BFD_ASSEMBLER
   symbolP->sy_number = ~0;

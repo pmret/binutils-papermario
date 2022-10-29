@@ -61,7 +61,7 @@ static void s_stab_generic PARAMS ((int, char *, char *));
  */
 
 #ifndef SEPARATE_STAB_SECTIONS
-#define SEPARATE_STAB_SECTIONS 0
+#define SEPARATE_STAB_SECTIONS 1
 #endif
 
 unsigned int
@@ -284,9 +284,13 @@ s_stab_generic (what, stab_secname, stabstr_secname)
       char *p;
 
       static segT cached_sec;
-      static char *cached_secname;
+      static char *cached_secname = 0;
 
       dot = frag_now_fix ();
+
+#ifdef md_flush_pending_output
+      md_flush_pending_output ();
+#endif
 
       if (cached_secname && !strcmp (cached_secname, stab_secname))
 	{

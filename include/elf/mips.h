@@ -56,6 +56,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 /* -mips4 code.  */
 #define E_MIPS_ARCH_4		0x30000000
+
+/* -mips64 code.  */
+#define E_MIPS_ARCH_6          0x60000000
 
 /* Processor specific section indices.  These sections do not actually
    exist.  Symbols with a st_shndx field corresponding to one of these
@@ -123,6 +126,9 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  */
 
 /* Events section.  */
 #define SHT_MIPS_EVENTS		0x70000021
+
+/* ABI related flags section.  */
+#define SHT_MIPS_ABIFLAGS       0x7000002a
 
 /* A section of type SHT_MIPS_LIBLIST contains an array of the
    following structure.  The sh_link field is the section index of the
