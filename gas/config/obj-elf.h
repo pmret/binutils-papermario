@@ -159,6 +159,7 @@ extern void obj_elf_init_stab_section PARAMS ((segT));
 
 /* We smuggle stabs in ECOFF rather than using a separate section.
    The Irix linker can not handle a separate stabs section.  */
+/*
 #undef SEPARATE_STAB_SECTIONS
 #undef INIT_STAB_SECTION
 #define OBJ_PROCESS_STAB(seg, what, string, type, other, desc) \
@@ -166,7 +167,7 @@ extern void obj_elf_init_stab_section PARAMS ((segT));
 
 #define OBJ_GENERATE_ASM_LINENO(filename, lineno) \
   ecoff_generate_asm_lineno ((filename), (lineno))
-
+*/
 #endif /* ECOFF_DEBUGGING */
 
 extern void elf_frob_symbol PARAMS ((struct symbol *, int *));

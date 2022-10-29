@@ -150,4 +150,6 @@ extern void mips_flush_pending_output PARAMS ((void));
 extern void mips_enable_auto_align PARAMS ((void));
 #define md_elf_section_change_hook()	mips_enable_auto_align()
 
+extern int mips_debug;
+
 #endif /* TC_MIPS */
