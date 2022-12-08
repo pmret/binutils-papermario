@@ -10,7 +10,7 @@ jobs:
       matrix:
         TARGET:
           - {
-              OS: 'ubuntu-latest',
+              OS: 'ubuntu-20.04',
               CFLAGS: '-static',
               HOST: 'i386-pc-linux',
               ARCHIVE_NAME: 'linux.tar.gz'
