@@ -433,6 +433,8 @@ struct mips_set_options
   /* Non-zero if we should not autoextend mips16 instructions.
      Changed by `.set autoextend' and `.set noautoextend'.  */
   int noautoextend;
+  // hack for pm
+  int nogpopt;
 };
 
 /* This is the struct we use to hold the current set of options.  Note
@@ -10287,6 +10289,10 @@ s_mipsset (x)
     mips_opts.noautoextend = 0;
   else if (strcmp (name, "noautoextend") == 0)
     mips_opts.noautoextend = 1;
+  else if (strcmp (name, "gpopt") == 0)
+	mips_opts.nogpopt = 0;
+  else if (strcmp (name, "nogpopt") == 0)
+    mips_opts.nogpopt = 1;
   else if (strcmp (name, "push") == 0)
     {
       struct mips_option_stack *s;
@@ -10620,7 +10626,7 @@ nopic_need_relax (sym, before_relaxing)
   if (sym == 0)
     return 0;
 
-  if (USE_GLOBAL_POINTER_OPT)
+  if (USE_GLOBAL_POINTER_OPT && !mips_opts.nogpopt)
     {
       const char *symname;
       int change;
